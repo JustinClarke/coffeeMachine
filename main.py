@@ -41,8 +41,8 @@ def start():
         report()
     if user_request == 'off':
         os.system("cls")
-    print(check_resources(user_request))
-    collect_money(user_request)
+    if check_resources(user_request) == True:
+        collect_money(user_request)
 
 def report():
     for item in resources:

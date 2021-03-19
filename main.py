@@ -48,12 +48,13 @@ def start():
         collect_money(user_request)
         
 def report():
-    round(resources["money"], 3)
-    for item in resources:
-        print(f"{item} = {resources.get(item)}")
+    print(resources["water"])
+    print(resources["milk"])
+    print(resources["coffee"])
+    print(round(resources["money"], 3))
 
 def check_resources(order):
-    if MENU["espresso"]["ingredients"]["water"] <= resources["water"]  and MENU["espresso"]["ingredients"]["coffee"] <= resources["coffee"]:
+    if order == "espresso" and MENU["espresso"]["ingredients"]["water"] <= resources["water"]  and MENU["espresso"]["ingredients"]["coffee"] <= resources["coffee"]:
         resources["water"] -= MENU["espresso"]["ingredients"]["water"]
         resources["coffee"] -= MENU["espresso"]["ingredients"]["coffee"]
         return True

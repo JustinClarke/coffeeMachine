@@ -34,32 +34,42 @@ resources = {
 }
 
 i = 0
+shut_down = False
 
 def start():
+    global shut_down
     user_request = input("What would you like? (espresso/latte/cappuccino): ")
     if user_request == 'report':
         report()
-    if user_request == 'off':
+    elif user_request == 'off':
+        shut_down = True
         os.system("cls")
-    if check_resources(user_request) == True:
+    elif check_resources(user_request) == True and user_request != 'report':
         collect_money(user_request)
-
+        
 def report():
+    round(resources["money"], 3)
     for item in resources:
         print(f"{item} = {resources.get(item)}")
 
 def check_resources(order):
-    if order == "espresso":
-        if MENU["espresso"]["ingredients"]["water"] <= resources["water"]  and MENU["espresso"]["ingredients"]["coffee"] <= resources["coffee"]:
-            return True
+    if MENU["espresso"]["ingredients"]["water"] <= resources["water"]  and MENU["espresso"]["ingredients"]["coffee"] <= resources["coffee"]:
+        resources["water"] -= MENU["espresso"]["ingredients"]["water"]
+        resources["coffee"] -= MENU["espresso"]["ingredients"]["coffee"]
+        return True
     elif MENU[order]["ingredients"]["water"] <= resources["water"] and MENU[order]["ingredients"]["milk"] <= resources["milk"] and MENU[order]["ingredients"]["coffee"] <= resources["coffee"]:
-            return True
+        resources["water"] -= MENU[order]["ingredients"]["water"]
+        resources["milk"] -= MENU[order]["ingredients"]["milk"]
+        resources["coffee"] -= MENU[order]["ingredients"]["coffee"]
+        return True
+    else:
+        print("Not enough resources :/")
 
 def collect_money(user_request):
-    quarters = input("Enter number of quarters")
-    dimes = input("Enter number of dimes")
-    nickles = input("Enter number of nickles")
-    pennies = input("Enter number of pennies")
+    quarters = float(input("How many quarters: "))
+    dimes = float(input("How many dimes: "))
+    nickles = float(input("How many nickles: "))
+    pennies = float(input("How many pennies: "))
     verify_money(quarters, dimes, nickles, pennies, user_request)
 
 def verify_money(quarters, dimes, nickles, pennies, user_request):
@@ -68,9 +78,10 @@ def verify_money(quarters, dimes, nickles, pennies, user_request):
         print("Sorry that's not enough money. Money refunded")
     elif total_money > MENU[user_request]["cost"]:
         change = total_money - MENU[user_request]["cost"]
-        print(f"Order placed. Change returned {change}")
+        print(f"Here is {round(change,3)} in change.\nEnjoy your {user_request}!")
     elif total_money == total_money - MENU[user_request]["cost"]:
         print("Order placed")
     resources["money"] += total_money
-
-start()
+    
+while not shut_down:
+    start()
